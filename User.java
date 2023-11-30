@@ -11,7 +11,7 @@ public class User implements Subject, Observer {
     private int birth_month;
     private int birth_year;
     private String phone_number;
-    private List<Observer> friends = new ArrayList<>(); // array of users
+    private List<Observer> follwers = new ArrayList<>(); // array of users
 
     public User(String username, String gender, String email, String password, int birth_day, int birth_month,
             int birth_year, String phone_number) {
@@ -47,19 +47,29 @@ public class User implements Subject, Observer {
         return phone_number;
     }
 
-    @Override
-    public void follow(Observer friend) {
-        friends.add(friend);
+    public void addFollwer(User friend) {
+        // add friend in my followers when he follows me.
+        this.follwers.add(friend);
+    }
+
+    public void removeFollwer(User friend) {
+        this.follwers.remove(friend);
     }
 
     @Override
-    public void unfollow(Observer friend) {
-        friends.remove(friend);
+    public void follow(User friend) {
+        // add me in his followrs
+        friend.addFollwer(this);
+    }
+
+    @Override
+    public void unfollow(User friend) {
+        friend.removeFollwer(this);
     }
 
     @Override
     public void notifyObserver() {
-        for (Observer friend : friends) {
+        for (Observer friend : follwers) {
             // todo to be changed to object post after creating it.
             friend.update("New post", this);
         }
@@ -68,7 +78,7 @@ public class User implements Subject, Observer {
     @Override
     public void update(String Post, User publisher) {
         // todo change post from string to object post
-        System.out.println(publisher.getUsername()+"has posted a new post "+Post);
+        System.out.println(publisher.getUsername() + "has posted a new post " + Post);
     }
 
 }

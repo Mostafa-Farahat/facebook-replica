@@ -1,7 +1,7 @@
 public interface Subject {
 
-    void follow(Observer friend);
-    void unfollow(Observer friend);
+    void follow(User friend);
+    void unfollow(User friend);
     void notifyObserver();
     
 }
