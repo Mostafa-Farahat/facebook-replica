@@ -1,0 +1,7 @@
+Username: george
+Email: george@gmail.com
+Password: gogo4804
+Phone number: 01274709315
+Gender: male
+Birthdate: 28/11/2023
+-----------------------------------------------

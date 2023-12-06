@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo1.login">
+    <children>
+        <Button fx:id="log" layoutX="173.0" layoutY="154.0" mnemonicParsing="false" onAction="#login" prefHeight="35.0" prefWidth="60.0" text="Login" />
+        <Button fx:id="reg" layoutX="23.0" layoutY="161.0" mnemonicParsing="false" onAction="#switchtoRegister" prefHeight="35.0" prefWidth="74.0" text="Register" />
+        <Label layoutX="7.0" layoutY="60.0" prefHeight="18.0" prefWidth="74.0" style="" text="username" />
+        <Label layoutX="7.0" layoutY="112.0" prefHeight="18.0" prefWidth="70.0" text="password" />
+        <TextField fx:id="usernameFeild" layoutX="98.0" layoutY="56.0" onAction="#getusername" promptText="Enter your username" />
+        <PasswordField fx:id="passwordField" layoutX="99.0" layoutY="109.0" onAction="#getpassword" promptText="Enter your password" />
+    </children>
+</AnchorPane>
