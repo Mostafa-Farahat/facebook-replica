@@ -1,4 +1,5 @@
 package publications;
+import LoaderDeloader.FileProcessing;
 import chat.Chat;
 import chat.Message;
 import java.io.IOException;
@@ -10,7 +11,7 @@ public class userinterface {
     static int checkprof = 0;
     static boolean checktag = true;
     static Scanner input = new Scanner(System.in);
-    private static boolean exitLoop = false;
+    public static boolean exitLoop = false;
 
     static User[] users = User.exportUsers();
     static Post[] posts = User.exportPosts();
@@ -36,34 +37,34 @@ public class userinterface {
             }
         }
     }
-
-    public static void Display(Post x, User user) {
-        System.out.println(user.getUserName());
-        if (x.getTags().length != 0) {
-            System.out.println("Tagged  : ");
-            for (User tagged : x.getTags()) {
-                System.out.print(" " + tagged.getUserName());
-            }
-        }
-        System.out.println("\t" + x.getContent());
-        System.out.println(x.getLikeNumber() + "\t " + x.getComments().length);
-        System.out.println("likes" + "\t " + " Comments ");
-        System.out.println("\t" + "------------------------------------");
-        System.out.println("Press 0 to access Actions Menu ");
-        System.out.println("Press 1 to like  ");
-        System.out.println("Press 2 to remove like ");
-        System.out.println("Press 3 to show likes  ");
-        System.out.println("Press 4 to Comment ");
-        System.out.println("Press 5 to Display Comments ");
-        System.out.println("Press 6 to Display Next Post ");
-        if (user.getId()!=LoginRegisterClass.x.getId())
-        {
-            System.out.println("Press 7 to access friends action menu");
+public static void Display(Post x,User user)
+{
+    System.out.println(user.getUserName());
+    if (x.getTags().length != 0) {
+        System.out.println("Tagged  : ");
+        for (User tagged : x.getTags()) {
+            System.out.print(" " + tagged.getUserName());
         }
     }
-    public static void DisplayOtherprofile(User user) {
-        while (true) {
+    System.out.println("\t" + x.getContent());
+    System.out.println(x.getLikeNumber() + "\t " + x.getComments().length);
+    System.out.println("likes" + "\t " + " Comments ");
+    System.out.println("\t" + "------------------------------------");
+    System.out.println("Press 0 to access Actions Menu ");
+    System.out.println("Press 1 to like  ");
+    System.out.println("Press 2 to remove like ");
+    System.out.println("Press 3 to show likes  ");
+    System.out.println("Press 4 to Comment ");
+    System.out.println("Press 5 to Display Comments ");
+    System.out.println("Press 6 to Display Next Post ");
+    if (user.getId()!=LoginRegisterClass.x.getId())
+    {
+        System.out.println("Press 7 to access friends action menu");
+    }
+}
 
+    public static void DisplayOtherprofile(User user) throws IOException {
+        while (!exitLoop) {
             if (LoginRegisterClass.x.getFriends(user.getUserName())==null)
             {
                 checkprof=0;
@@ -95,8 +96,15 @@ public class userinterface {
                             xx.removeLike(LoginRegisterClass.x.getId());
                             userinterface.Display(xx, user);
                         } else if (choice == 3) {
-                            for (User liked : xx.getLikes()) {
-                                System.out.println(liked.getUserName());
+                            if (xx.getLikes().length==0)
+                            {
+                                System.out.println(" no one liked");
+                            }
+                            else
+                            {
+                                for (User liked : xx.getLikes()) {
+                                    System.out.println("Liked :"+ liked.getUserName());
+                                }
                             }
                         } else if (choice == 4) {
                             System.out.println(" enter the Comment");
@@ -128,18 +136,16 @@ public class userinterface {
             }
         }
     }
-
-    public static void ActionMenu (User x){
+    public static void ActionMenu (User x) throws IOException {
         while (!exitLoop) {
             System.out.println("type 1 to add posts ");
             System.out.println(" type 2 to see all your friends");
             System.out.println(" type 3 to search for your friends");
             System.out.println(" type 4 chat with your friends");
             System.out.println(" type 5 to show your friend request");
-            System.out.println(" type 6 to show your Posts");
-            System.out.println(" type 7 to search for User");
-            System.out.println(" type 8 to access your profile");
-            System.out.println("type 9 to exit");
+            System.out.println(" type 6 to search for User");
+            System.out.println(" type 7 to access your profile");
+            System.out.println("type 8 to exit");
             int choice = input.nextInt();
             input.nextLine();
             if (choice == 1) {
@@ -165,29 +171,35 @@ public class userinterface {
                 } else if (c == 1) {
                     checktag=true;
                     while (checktag == true) {
-                        System.out.println("Enter the name of the user you want to tag : ");
-                        String tagname = input.nextLine();
-                        User p = LoginRegisterClass.x.getUserByName(tagname);
-                        if (p == null) {
-                            System.out.println(" Check  the name ");
-                            continue;
-                        }
-                        for (int i = posts.length - 1; i > posts.length - 2; i--) {
-                            posts[i].tagUser(p.getId());
-                        }
-                        System.out.println(" enter 0 if you want to submit the post ");
-                        System.out.println(" enter 1 to tag more users ");
-                        int in = input.nextInt();
-                        input.nextLine();
-                        if (in == 0) {
-                            checktag = false;
-                        } else if (in == 1) {
-                            continue;
+                        if (x.getFriends().length==0)
+                        {
+                            System.out.println(" you have no freinds");
+                            checktag=false;
+                        }else {
+                            System.out.println("Enter the name of the user you want to tag : ");
+                            String tagname = input.nextLine();
+                            User p = LoginRegisterClass.x.getUserByName(tagname);
+                            if (p == null) {
+                                System.out.println(" Check  the name ");
+                                continue;
+                            }
+                            for (int i = posts.length - 1; i > posts.length - 2; i--) {
+                                posts[i].tagUser(p.getId());
+                            }
+                            System.out.println(" enter 0 if you want to submit the post ");
+                            System.out.println(" enter 1 to tag more users ");
+                            int in = input.nextInt();
+                            input.nextLine();
+                            if (in == 0) {
+                                checktag = false;
+                            } else if (in == 1) {
+                                continue;
+                            } else {
+                                System.out.println(" invalid choice");
+                            }
                         }
                     }
-                } else {
-                    System.out.println(" invalid choice");
-                }
+                        }
             } else if (choice == 2) {
                 if (x.getFriends() == null) {
                     System.out.println("No Friends Available");
@@ -234,62 +246,65 @@ public class userinterface {
 
                 }
             } else if (choice == 4) {
-                if (x.getFriends() == null) {
-                    System.out.println(" No friends available");
-                } else {
-                    Chat[] chats1 = User.exportChats();
-                    while (true) {
-                        if (chats.length != 0) {
-                            chats1 = new Chat[0]; // Reset chats1 to an empty array before populating it again
-                            for (Chat c : chats) {
-                                for (User x1 : c.getParticipants()) {
-                                    if (x1.getId() == LoginRegisterClass.x.getId()) {
-                                        chats1 = Arrays.copyOf(chats1, chats1.length + 1);
-                                        chats1[chats1.length - 1] = c;
+                    if (x.getFriends() == null) {
+                        System.out.println("No friends available");
+                    } else {
+                        Chat[] chats1 = new Chat[0]; // Initialize chats1 outside the loop
+                        while (true) {
+                            Chat[] chats = User.exportChats();
+                            if (chats.length != 0) {
+                                chats1 = new Chat[0]; // Reset chats1 to an empty array before populating it again
+                                for (Chat c : chats) {
+                                    for (User x1 : c.getParticipants()) {
+                                        if (x1.getId() == LoginRegisterClass.x.getId()) {
+                                            chats1 = Arrays.copyOf(chats1, chats1.length + 1);
+                                            chats1[chats1.length - 1] = c;
+                                        }
                                     }
                                 }
-                            }
-                            if (chats1.length == 0) {
-                                startnewchat(x);
-                            } else {
-                                for (Chat chat : chats1) {
-                                    System.out.println(chat.getChatName());
-                                }
-                                System.out.println("Enter the chat name to access it:");
-                                String cname = input.nextLine();
-                                Chat c = null;
-                                for (Chat chat : chats1) {
-                                    if (cname.equals(chat.getChatName())) {
-                                        c = chat;
+                                if (chats1.length == 0) {
+                                    startnewchat(x);
+                                } else {
+                                    for (Chat chat : chats1) {
+                                        System.out.println(chat.getChatName());
+                                    }
+                                    System.out.println("Enter the chat name to access it:");
+                                    String cname = input.nextLine();
+                                    Chat c = null;
+                                    for (Chat chat : chats1) {
+                                        if (cname.equals(chat.getChatName())) {
+                                            c = chat;
+                                            break;
+                                        }
+                                    }
+                                    if (c == null) {
+                                        System.out.println("Check the name of the chat.");
+                                    } else {
+                                        Chatmenu(c, x);
                                         break;
                                     }
                                 }
-                                if (c == null) {
-                                    System.out.println("Check the name of the chat.");
-                                } else {
-                                    Chatmenu(c, x);
-                                    break;
+                                while (true) {
+                                    System.out.println("Enter 1 to access back action menu.");
+                                    System.out.println("Enter 2 to access another chat.");
+                                    System.out.println("Enter 3 to start another chat.");
+                                    int choice777 = input.nextInt();
+                                    input.nextLine();
+                                    if (choice777 == 1) {
+                                        break;
+                                    } else if (choice777 == 2) {
+                                        continue;
+                                    } else if (choice777 == 3) {
+                                        startnewchat(x);
+                                    } else {
+                                        System.out.println("Invalid input.");
+                                    }
                                 }
-                            }
-                            System.out.println("Enter 1 to access back action menu.");
-                            System.out.println("Enter 2 to access another chat.");
-                            System.out.println("Enter 3 to start another chat.");
-                            int choice777 = input.nextInt();
-                            input.nextLine();
-                            if (choice777 == 1) {
-                                break;
-                            } else if (choice777 == 2) {
-                                continue;
-                            } else if (choice777 == 3) {
-                                startnewchat(x);
                             } else {
-                                System.out.println("Invalid input.");
+                                startnewchat(x);
                             }
-                        } else {
-                            startnewchat(x);
                         }
                     }
-                     }
                     } else if (choice == 5) {
                 if(x.getFriendRequests()==null)
                 {
@@ -335,21 +350,23 @@ public class userinterface {
                     }
                 }
             } else if (choice == 6) {
-                if (x.getPosts().length == 0) {
-                    System.out.println("No posts available");
+                for (User search : User.exportUsers()) {
+                    System.out.println(search.getUserName());
                 }
-            } else if (choice == 7) {
-                System.out.println(" Enter the name of the user you want to search for him ");
+                System.out.println("Enter the name of the user you want to search for:");
                 String name = input.nextLine();
-                if (LoginRegisterClass.x.getUserByName(name) == null) {
+                User user = LoginRegisterClass.x.getUserByName(name);
+                if (user == null) {
                     System.out.println("No users available with this name");
                 } else {
-                    DisplayOtherprofile(LoginRegisterClass.x.getUserByName(name));
+                    DisplayOtherprofile(user);
                 }
-            } else if (choice==8) {
+            } else if (choice == 7) {
                 start(LoginRegisterClass.x);
-            } else if (choice==9) {
+            } else if (choice==8) {
                 exitLoop = true;
+                FileProcessing.exportData();
+                System.exit(0);
                 break;
             } else {
                 System.out.println("Invalid Input");
@@ -357,29 +374,29 @@ public class userinterface {
         }
     }
   static   boolean checkreplay = false;
-    public static void replaymenu (Comment comment, User user){
-        checkreplay=false;
-        while (checkreplay == false) {
-            Reply[] zz = comment.getReplies();
-            for (Reply reply : zz) {
+    public static void replaymenu(Comment comment, User user) {
+        boolean checkreplay = false;
+        while (!checkreplay) {
+            Reply[] replies = comment.getReplies();
+            for (Reply reply : replies) {
                 while (true) {
-                    for (User author : users) {
+                    for (User author : User.exportUsers()) {
                         if (author.getId() == reply.getPublisherId()) {
                             System.out.println(author.getUserName());
                         }
                     }
                     System.out.println(reply.getContent());
-                    //System.out.println(reply.getLikes() + "Likes");
-                    System.out.println("\n" + "press 1 to see next replay ");
-                    System.out.println("press 2 to get back to the post  ");
-                    System.out.println("\n" + "press 3 to like the replay ");
-                    System.out.println("\n" + "press 4 to remove the like ");
-                    System.out.println("\n" + "press 5 to see who liked ");
+                    System.out.println(reply.getLikes().length + " Likes");
+                    System.out.println("\nPress 1 to see the next replay");
+                    System.out.println("Press 2 to get back to the post");
+                    System.out.println("Press 3 to like the replay");
+                    System.out.println("Press 4 to remove the like");
+                    System.out.println("Press 5 to see who liked");
                     int x2 = input.nextInt();
                     input.nextLine();
-                    if (x2 == 1)
+                    if (x2 == 1) {
                         break;
-                    else if (x2 == 2) {
+                    } else if (x2 == 2) {
                         checkreplay = true;
                         break;
                     } else if (x2 == 3) {
@@ -387,72 +404,92 @@ public class userinterface {
                     } else if (x2 == 4) {
                         reply.removeLike(user.getId());
                     } else if (x2 == 5) {
-                        for (User e : reply.getLikes()) {
-                            System.out.println(e.getUserName());
+                        if (reply.getLikes().length == 0) {
+                            System.out.println("No one liked");
+                        } else {
+                            for (User e : reply.getLikes()) {
+                                System.out.println("Liked:"+ e.getUserName());
+                            }
                         }
                     } else {
                         System.out.println("Invalid input");
                     }
                 }
+                if (checkreplay) {
+                    break;
+                }
+            }
+            if (checkreplay) {
+                break;
             }
         }
     }
-
-    public static void commentmenu (Post post, User user){
-        while (true) {
-            Comment[] comment1 = post.getComments();
-            if (comment1.length == 0) {
-                System.out.println(" No Comments Available");
+    public static void commentmenu(Post post, User user) {
+        boolean exit = false;
+        while (!exit) {
+            Comment[] comments = post.getComments();
+            if (comments.length == 0) {
+                System.out.println("No Comments Available");
                 break;
             }
-            for (Comment z : comment1) {
+            for (Comment comment : comments) {
                 while (true) {
                     for (User author : users) {
-                        if (author.getId() == z.getPublisherId()) {
+                        if (author.getId() == comment.getPublisherId()) {
                             System.out.println(author.getUserName());
                         }
                     }
-                    System.out.println("\t" + z.getContent());
-                    System.out.println("Likes :" + z.getLikes());
-                    System.out.println("\n" + "press 0 to replay to the comment ");
-                    System.out.println("\n" + "press 1 to see the replays to the comment ");
-                    System.out.println("\n" + "press 2 to see the next comment ");
-                    System.out.println("\n" + "press 3 to like the comment ");
-                    System.out.println("\n" + "press 4 to remove the like ");
-                    System.out.println("\n" + "press 5 to see who liked ");
+                    System.out.println("\t" + comment.getContent());
+                    System.out.println("Likes: " + comment.getLikes().length);
+                    System.out.println("\nPress 0 to reply to the comment");
+                    System.out.println("Press 1 to see the replies to the comment");
+                    System.out.println("Press 2 to see the next comment");
+                    System.out.println("Press 3 to like the comment");
+                    System.out.println("Press 4 to remove the like");
+                    System.out.println("Press 5 to see who liked");
+                    System.out.println("Press 6 to get back to the post");
                     int cc = input.nextInt();
                     input.nextLine();
                     if (cc == 0) {
-                        System.out.println("Enter your replay :");
+                        System.out.println("Enter your reply:");
                         String re = input.nextLine();
-                        z.addReply(user.getId(), re);
-                        replaymenu(z, user);
+                        comment.addReply(user.getId(), re);
+                        replaymenu(comment, user);
                     } else if (cc == 1) {
-                        if (z.getReplies().length == 0) {
-                            System.out.println("No replies Available");
+                        if (comment.getReplies().length == 0) {
+                            System.out.println("No replies available");
                             break;
                         } else {
-                            replaymenu(z, user);
+                            replaymenu(comment, user);
                         }
                     } else if (cc == 2) {
                         break;
                     } else if (cc == 3) {
-                        z.addLike(user.getId());
+                        comment.addLike(user.getId());
                     } else if (cc == 4) {
-                        z.removeLike(user.getId());
+                        comment.removeLike(user.getId());
                     } else if (cc == 5) {
-                        for (User e : z.getLikes()) {
-                            System.out.println(e.getUserName());
+                        if (comment.getLikes().length == 0) {
+                            System.out.println("No one liked");
+                        } else {
+                            for (User e : comment.getLikes()) {
+                                System.out.println("liked :+"+ e.getUserName());
+                            }
                         }
+                    } else if (cc == 6) {
+                        exit = true;
+                        break;
                     } else {
-                        System.out.println("invalid input");
+                        System.out.println("Invalid input");
                     }
+                }
+                if (exit) {
+                    break;
                 }
             }
         }
     }
-
-    public static void start (User x){
+    public static void start (User x) throws IOException {
         while (!exitLoop) {
             System.out.println("----------------------------------------------------------------------------");
              System.out.println("\t" + "\t" + "\t" + "\t" + "\t" + "Welcome   " + x.getUserName());
@@ -475,13 +512,16 @@ public class userinterface {
                         continue;
                     } else if (choice == 2) {
                         xx.removeLike(x.getId());
-                        userinterface.Display(xx, x);
                         continue;
                     } else if (choice == 3) {
-                        for (User user : xx.getLikes()) {
-                            System.out.println(user.getUserName());
+                        if (xx.getLikes().length==0)
+                        {
+                            System.out.println(" No one liked");
+                        }else {
+                            for (User user : xx.getLikes()) {
+                                System.out.println("Liked:"+user.getUserName());
+                            }
                         }
-                        userinterface.Display(xx, x);
                         continue;
                     } else if (choice == 4) {
                         System.out.println(" enter the Comment");
@@ -497,33 +537,32 @@ public class userinterface {
                             commentmenu(xx, x);
                         }
                     } else if (choice == 6) {
-                        continue;
+                        break;
                     } else
+                    {
                         System.out.println("wrong input");
+                    }
                     System.out.println("\t" + "____________________________________");
                 }
             }
         }
     }
-    public static void Chatmenu(Chat c , User u)
-    {
+    public static void Chatmenu(Chat c , User u) throws IOException {
         while (true)
         {
             System.out.println(c.getChatName());
             if (c.getMessages().length==0)
             {
                 System.out.println(" no messages available");
-
                 System.out.println(" enter 0 to add new message ");
                 System.out.println(" enter 1 to see participants ");
                 System.out.println(" enter 2 add participants  ");
                 System.out.println(" enter 3 to remove participants  ");
                 System.out.println(" enter 4 change chat name  ");
-                System.out.println(" enter 5  to exit chat  ");
+                System.out.println(" enter 5  to get back to action menu  ");
                 int choice = input.nextInt();
                 input.nextLine();
-                if (choice==0)
-                {
+                if (choice==0) {
                     System.out.println("Enter the content of the massage");
                     String msg = input.nextLine();
                     c.addMessage(u.getId(), msg);
@@ -575,7 +614,7 @@ public class userinterface {
                     String cname = input.nextLine();
                     c.setChatName(cname);
                 } else if (choice==5) {
-                    break;
+                    ActionMenu(u);
                 }
                 else {
                     System.out.println("invalid input");
@@ -653,7 +692,7 @@ public class userinterface {
                     String cname = input.nextLine();
                     c.setChatName(cname);
                 } else if (choice==5) {
-                    break;
+                    ActionMenu(u);
                 }
                 else {
                     System.out.println("invalid input");
@@ -661,40 +700,43 @@ public class userinterface {
 
             }
         }
-
     }
-   static TreeSet<Integer> ids = new TreeSet<>() ;
-
-    public static void startnewchat(User x)
-    {
+    public static void startnewchat(User x) throws IOException {
+        TreeSet<Integer> ids = new TreeSet<Integer>();
         for (User freind:x.getFriends())
         {
             System.out.println( freind.getUserName());
         }
-        System.out.println(" enter the name of the friend you want to start chat with :");
-        String freind = input.nextLine();
-        boolean check = false;
-        for (User z : users) {
-            if (z.getUserName().equals(freind)) {
-                ids.add(z.getId());
-                check = true;
-            }
+        System.out.println("enter the number of particpnts you want to add");
+        int num =input.nextInt();
+        input.nextLine();
+        for (int i = 0; i < num; i++) {
+            System.out.println(" enter the name of the friend you want to start chat with :");
+            String freind = input.nextLine();
+       ids.add(LoginRegisterClass.x.getUserByName(freind).getId());
         }
-        if (ids == null) {
-            System.out.println(" you have to select friend(s) to chat with ");
-        }
-        if (!check) {
-            System.out.println(" check the name of your friend");
-        } else {
+        ids.add(x.getId());
             System.out.println(" enter chat name ");
-            String chatname =input.nextLine();
-             x.startChat(chatname,ids);
-             Chat []chat =User.exportChats();
-            Chatmenu(chat[chat.length-1],LoginRegisterClass.x);
-        }
+        String chatname =input.nextLine();
+        x.startChat(chatname,ids);
+        Chat []chat =User.exportChats();
+        Chatmenu(chat[chat.length-1],x);
+//        boolean check = false;
+//        for (User z : users) {
+//            if (z.getUserName().equals(freind)) {
+//
+//                check = true;
+//            }
+//        }
+//        if (ids == null) {
+//            System.out.println(" you have to select friend(s) to chat with ");
+//        }
+//        if (!check) {
+//            System.out.println(" check the name of your friend");
+//        } else {
     }
-    public static void otherprofileactions ( int check, User user){
-        while (true) {
+    public static void otherprofileactions ( int check, User user) throws IOException {
+        while (!exitLoop) {
             if (check == 0) {
                 System.out.println(" press 0 to send friend request ");
             }

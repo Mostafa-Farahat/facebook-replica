@@ -22,9 +22,6 @@ public class Message {
         return messageId;
     }
 
-    public int getSenderId() {
-        return senderId;
-    }
 
     public String toString() {
         return senderId+ ": "+message;
